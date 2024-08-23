@@ -45,7 +45,7 @@ def pagos(vector_de_acciones, nd):
             # municipios contiguos que designarón su zona al comercio menos el número de municipios
             # contiguos que designaron su zona a la industria. Se usa 'max' y 'min' en estos calculos
             # para evitar errores relacionados con referencias a elementos fuera de la lista y para
-            # tratar el "Impacto ambiental alto".
+            # tratar el "Impacto ambiental alto" y el "Impacto ambiental marginal".
             if vector_de_acciones[j] == "R":
                 vector_de_pagos[j] = (int(vector_de_acciones[max(0,j-1)] == "C") 
                                    + int(vector_de_acciones[min(4,j+1)] == "C")
@@ -62,12 +62,13 @@ def pagos(vector_de_acciones, nd):
             # Si "I" es elegido como el uso del suelo para la ciudad 'j', entonces este sueldo valdrá
             # un valor equivalente a la cantidad de zonas residenciales del area metropolitana mas el número
             # de municipios contiguos destinados a la industria menos el impacto ambiental que es igual
-            # al minimo entre el número de municipios industriales o 4, esto menos 1.
+            # al maximo entre 0 y el minimo del número de municipios industriales o 4, 
+            # este mínimo decrementado en 1.
             else:
                 vector_de_pagos[j] = (vector_de_acciones.count("R")
-                                      + int(vector_de_acciones[max(0,j-1)] == "I")
-                                      + int(vector_de_acciones[min(4,j+1)] == "I")
-                                      - min(4,vector_de_acciones.count("I")) - 1
+                                      + int(vector_de_acciones[max(0,j-1)] == "I" and max(0,j-1) != j)
+                                      + int(vector_de_acciones[min(4,j+1)] == "I" and min(4,j+1) != j)
+                                      - max(min(4,vector_de_acciones.count("I")) - 1, 0)
                                      )
 
         # Retornamos 'vector_de_pagos' y salimos de la función.
@@ -87,9 +88,9 @@ def pagos(vector_de_acciones, nd):
          + int(vector_de_acciones[min(4,nd+1)] == "R"))
         else:
           return (vector_de_acciones.count("R")
-                                + int(vector_de_acciones[max(0,nd-1)] == "I")
-                                + int(vector_de_acciones[min(4,nd+1)] == "I")
-                                - min(4,vector_de_acciones.count("I")) - 1
+                                + int(vector_de_acciones[max(0,nd-1)] == "I" and max(0,nd-1) != nd)
+                                + int(vector_de_acciones[min(4,nd+1)] == "I" and min(4,nd+1) != nd)
+                                - max(min(4,vector_de_acciones.count("I")) - 1, 0)
                                )
 
 # Definimos una función 'esENEP' que recibirá como parametro una lista 'vector_de_acciones' que es 
